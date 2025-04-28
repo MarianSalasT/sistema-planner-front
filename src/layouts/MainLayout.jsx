@@ -1,7 +1,8 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { Outlet } from "react-router-dom";
 
-export default function Layout({ children }) {
+export default function MainLayout() {
 
     return (
         <SidebarProvider>
@@ -10,7 +11,7 @@ export default function Layout({ children }) {
                 <main className="flex-1 py-2">
                     <SidebarTrigger className="cursor-pointer" />
                     <div className="py-3">
-                        {children}
+                        <Outlet />
                     </div>
                 </main>
             </div>

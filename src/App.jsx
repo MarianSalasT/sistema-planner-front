@@ -1,10 +1,16 @@
+import { BrowserRouter } from "react-router-dom"
+import { AuthProvider } from "./contexts/AuthContext"
+import AppRoutes from "./routes/AppRoutes"
+
 function App() {
 
   return (
     <>
-      <div className="flex flex-col justify-center items-center h-screen bg-gray-100">
-        <h1 className="text-3xl font-bold ">React + Vite + TailwindCSS</h1>
-      </div>
+      <BrowserRouter>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </BrowserRouter>
     </>
   )
 }
