@@ -4,58 +4,88 @@ import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext(null);
 
+const AUTH_STATUS = {
+    PENDING: 'pending',
+    AUTHENTICATED: 'authenticated',
+    UNAUTHENTICATED: 'unauthenticated'
+}
+
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [authStatus, setAuthStatus] = useState(AUTH_STATUS.PENDING);
+    const navigate = useNavigate();
 
     useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setAuthStatus(AUTH_STATUS.UNAUTHENTICATED);
+            navigate('/login');
+            return;
+        }
         checkAuth();
     }, []);
 
     const checkAuth = async () => {
         try {
-            const response = await api.get('/auth/check');
-            setUser(response.data);
+            const response = await api.post('/authenticate');
+            setUser(response.data.data);
+            setAuthStatus(AUTH_STATUS.AUTHENTICATED);
         } catch (error) {
             console.error('Error checking authentication:', error);
-            setUser(null);
-        } finally {
-            setLoading(false);
+            handleAuthError();
         }
+    };
+
+    const handleAuthError = () => {
+        setUser(null);
+        setAuthStatus(AUTH_STATUS.UNAUTHENTICATED);
+        localStorage.removeItem('token');
+        navigate('/login');
     };
 
     const login = async (credentials) => {
         try {
-            const response = await api.post('/auth/login', credentials);
-            const { token, user } = response.data;
+            setAuthStatus(AUTH_STATUS.PENDING);
+            const response = await api.post('/login', credentials);
+            const { token, user } = response.data.data;
+
+            if (!token) {
+                throw new Error('No token received from server');
+            }
+
             localStorage.setItem('token', token);
             setUser(user);
+            setAuthStatus(AUTH_STATUS.AUTHENTICATED);
         } catch (error) {
             console.error('Error logging in:', error);
+            handleAuthError();
             throw error;
         }
     };
 
     const logout = async () => {
         try {
-            const response = await api.post('/auth/logout');
-            localStorage.removeItem('token');
-            setUser(null);
+            setAuthStatus(AUTH_STATUS.PENDING);
+            await api.post('/logout');
         } catch (error) {
             console.error('Error logging out:', error);
-            throw error;
+            handleAuthError();
         }
     };
 
+    const value = {
+        user,
+        isAuthenticated: authStatus === AUTH_STATUS.AUTHENTICATED,
+        isPending: authStatus === AUTH_STATUS.PENDING,
+        login,
+        logout,
+        checkAuth
+    };
+
     return (
-        <AuthContext.Provider value={{ 
-            user, 
-            loading,
-            isAuthenticated: !!user,
-            login, 
-            logout }}>
-                {children}
-            </AuthContext.Provider>
+        <AuthContext.Provider value={value}>
+            {children}
+        </AuthContext.Provider>
     );
 }
 

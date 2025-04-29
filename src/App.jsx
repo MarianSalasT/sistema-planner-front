@@ -1,14 +1,14 @@
 import { BrowserRouter } from "react-router-dom"
 import { AuthProvider } from "./contexts/AuthContext"
 import AppRoutes from "./routes/AppRoutes"
-
+import { SidebarProvider } from "@/components/ui/sidebar"
 function App() {
 
   return (
     <>
       <BrowserRouter>
         <AuthProvider>
-          <AppRoutes />
+            <AppRoutes />
         </AuthProvider>
       </BrowserRouter>
     </>

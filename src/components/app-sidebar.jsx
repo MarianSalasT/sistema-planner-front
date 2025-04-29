@@ -13,15 +13,19 @@ import {
     SidebarMenuSubItem, 
     SidebarMenuSubButton
   } from "@/components/ui/sidebar"
-
+import { useLocation, useNavigate } from "react-router-dom"
 import { sidebarItems, sidebarAdminItems } from "@/constants/sidebar-items"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import LogoMinisterio from "@/assets/logo-ministerio.jpg"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible"
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { useState, useEffect } from "react"
+import { useAuth } from "@/contexts/AuthContext"
 
 export function AppSidebar() {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { checkAuth } = useAuth();
     const [openItems, setOpenItems] = useState(() => {
         const savedState = localStorage.getItem('sidebarOpenItems');
         return savedState ? JSON.parse(savedState) : {};
@@ -36,6 +40,11 @@ export function AppSidebar() {
             ...prev,
             [itemId]: !prev[itemId]
         }));
+    };
+
+    const handleNavigation = async (url) => {
+        await checkAuth();
+        navigate(url);
     };
 
     return (
@@ -62,11 +71,12 @@ export function AppSidebar() {
                         <SidebarMenu>
                             {sidebarItems.map((item) => (
                                 <SidebarMenuItem key={item.id}>
-                                    <SidebarMenuButton asChild>
-                                        <a href={item.url} className={`${item.url === window.location.pathname ? 'text-blue-500' : 'text-gray-500'}`}>
-                                            <item.icon />
-                                            <span>{item.title}</span>
-                                        </a>
+                                    <SidebarMenuButton 
+                                        onClick={() => handleNavigation(item.url)}
+                                        className={`cursor-pointer ${item.url === location.pathname ? 'text-blue-500' : 'text-gray-500'}`}
+                                    >
+                                        <item.icon />
+                                        <span>{item.title}</span>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}
@@ -98,12 +108,13 @@ export function AppSidebar() {
                                                 <SidebarMenuSub>
                                                     {item.items && item.items.map((subItem) => (
                                                         <SidebarMenuSubItem key={subItem.id}>
-                                                            <SidebarMenuSubButton asChild>
-                                                                <a href={subItem.url} className="flex items-center gap-2"
-                                                                    style={{ color: subItem.url === window.location.pathname ? '#3b82f6' : '#6b7280' }}>
-                                                                    <subItem.icon className="size-4" style={{ color: 'inherit' }} />
-                                                                    <span>{subItem.title}</span>
-                                                                </a>
+                                                            <SidebarMenuSubButton
+                                                                onClick={() => handleNavigation(subItem.url)}
+                                                                className="flex items-center gap-2 cursor-pointer"
+                                                                style={{ color: subItem.url === location.pathname ? '#3b82f6' : '#6b7280' }}
+                                                            >
+                                                                <subItem.icon className="size-4" style={{ color: 'inherit' }} />
+                                                                <span>{subItem.title}</span>
                                                             </SidebarMenuSubButton>
                                                         </SidebarMenuSubItem>
                                                     ))}
@@ -113,11 +124,12 @@ export function AppSidebar() {
                                     </SidebarMenuItem>
                                 ) : (
                                     <SidebarMenuItem key={item.id}>
-                                        <SidebarMenuButton asChild>
-                                            <a href={item.url} className={`${item.url === window.location.pathname ? 'text-blue-500' : 'text-gray-500'}`}>
-                                                <item.icon />
-                                                <span>{item.title}</span>
-                                            </a>
+                                        <SidebarMenuButton 
+                                            onClick={() => handleNavigation(item.url)}
+                                            className={`cursor-pointer ${item.url === location.pathname ? 'text-blue-500' : 'text-gray-500'}`}
+                                        >
+                                            <item.icon />
+                                            <span>{item.title}</span>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 )

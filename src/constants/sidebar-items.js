@@ -1,4 +1,4 @@
-import { LayoutDashboard, Calendar, Settings, File, Users, KeyRound } from "lucide-react"
+import { LayoutDashboard, Calendar, Settings, File, Users, KeyRound, UserRound } from "lucide-react"
 
 export const sidebarItems = [
     {
@@ -12,6 +12,12 @@ export const sidebarItems = [
         'title': 'Calendario',
         'url': '/calendar',
         'icon': Calendar
+    },
+    {
+        'id': 3,
+        'title': 'Perfil',
+        'url': '/user-profile',
+        'icon': UserRound
     }
 ]
 
