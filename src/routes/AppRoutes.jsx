@@ -12,6 +12,7 @@ import { AuditLogs } from '../pages/AuditLogs';
 import { Users } from '../pages/Users';
 import { Roles } from '../pages/Roles';
 import { UserProfile } from '../pages/UserProfile';
+import BoardPage from '../pages/Board[id]/Page';
 
 export default function AppRoutes() {
     return (
@@ -27,6 +28,7 @@ export default function AppRoutes() {
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/boards" element={<Boards />} />
+                    <Route path="/boards/:id" element={<BoardPage />} />
                     <Route path="/calendar" element={<Calendar />} />
                     <Route path="/audit-log" element={<AuditLogs />} />
                     <Route path="/users" element={<Users />} />

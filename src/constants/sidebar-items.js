@@ -7,18 +7,6 @@ export const sidebarItems = [
         'url': '/boards',
         'icon': LayoutDashboard
     },
-    {
-        'id': 2,
-        'title': 'Calendario',
-        'url': '/calendar',
-        'icon': Calendar
-    },
-    {
-        'id': 3,
-        'title': 'Perfil',
-        'url': '/user-profile',
-        'icon': UserRound
-    }
 ]
 
 export const sidebarAdminItems = [

@@ -7,6 +7,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Trash2, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CreateBoardModal, EditBoardModal, TrashBoardsModal, ConfirmationModal } from '@/components/board-modals';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export function Boards() {
     const { boards, loading, error, refetch: refetchBoards } = useBoards();
@@ -21,7 +23,8 @@ export function Boards() {
     const { deleteBoard, loading: deleteBoardLoading } = useDeleteBoard();
     const { user } = useAuth();	
     const currentUserId = user?.id;
-    
+    const navigate = useNavigate();
+
     // Estados para los modales
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -274,15 +277,14 @@ export function Boards() {
                                     </svg>
                                 </button>
                             )}
-                            <button 
-                                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md shadow-sm transition-all text-sm font-medium"
-                                onClick={() => {
-                                    // Aquí iría la navegación al tablero
-                                    console.log(`Ver tablero ${board.id}`);
-                                }}
+                            <Link
+                                to={`/boards/${board.id}`}
+                                state={{ board }}
+                                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md shadow-sm cursor-pointer transition-all text-sm font-medium"
+                                
                             >
                                 Ver tablero
-                            </button>
+                            </Link>
                         </div>
                     </div>
                 </div>
