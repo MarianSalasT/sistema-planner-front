@@ -13,6 +13,7 @@ import {
     SidebarMenuSubItem, 
     SidebarMenuSubButton
   } from "@/components/ui/sidebar"
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { useLocation, useNavigate } from "react-router-dom"
 import { sidebarItems, sidebarAdminItems } from "@/constants/sidebar-items"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -21,11 +22,12 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collap
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useAuth } from "@/contexts/AuthContext"
+import { User, LogOut } from "lucide-react"
 
 export function AppSidebar() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { checkAuth } = useAuth();
+    const { checkAuth, user, logout } = useAuth();
     const [openItems, setOpenItems] = useState(() => {
         const savedState = localStorage.getItem('sidebarOpenItems');
         return savedState ? JSON.parse(savedState) : {};
@@ -47,12 +49,16 @@ export function AppSidebar() {
         navigate(url);
     };
 
+    const handleLogout = async () => {
+        await logout();
+    };
+
     return (
         <Sidebar collapsible="icon">
             <SidebarHeader className="border-b">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg"> 
+                        <SidebarMenuButton size="lg" className="cursor-pointer" onClick={() => navigate('/dashboard')}> 
                             <Avatar className="size-8">
                                 <AvatarImage src={LogoMinisterio} />
                                 <AvatarFallback>AR</AvatarFallback>
@@ -83,10 +89,11 @@ export function AppSidebar() {
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
-                <SidebarGroup>
-                    <SidebarGroupLabel>Administrador</SidebarGroupLabel>
-                    <SidebarGroupContent>
-                        <SidebarMenu>
+                {user.role === 'admin' && (
+                    <SidebarGroup>
+                        <SidebarGroupLabel>Administrador</SidebarGroupLabel>
+                        <SidebarGroupContent>
+                            <SidebarMenu>
                             {sidebarAdminItems.map((item) => (
                                 item.type === 'collapse' ? (
                                     <SidebarMenuItem key={item.id}>
@@ -137,11 +144,27 @@ export function AppSidebar() {
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
+                )}
             </SidebarContent>
             <SidebarFooter>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        
+                        <SidebarMenuButton>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <div className="flex items-center gap-2">
+                                        <User className="size-4" />
+                                        <span>{user.name}</span>
+                                    </div>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                    <DropdownMenuItem onClick={handleLogout}>
+                                        <LogOut className="size-4" />
+                                        <span>Cerrar sesión</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarFooter>

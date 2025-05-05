@@ -36,6 +36,10 @@ export function AuthProvider({ children }) {
         }
     };
 
+    useEffect(() => {
+        console.log('authStatus desde useEffect', authStatus);
+    }, [authStatus]);
+
     const handleAuthError = () => {
         setUser(null);
         setAuthStatus(AUTH_STATUS.UNAUTHENTICATED);
@@ -67,6 +71,10 @@ export function AuthProvider({ children }) {
         try {
             setAuthStatus(AUTH_STATUS.PENDING);
             await api.post('/logout');
+            setUser(null);
+            setAuthStatus(AUTH_STATUS.UNAUTHENTICATED);
+            localStorage.removeItem('token');
+            navigate('/login');
         } catch (error) {
             console.error('Error logging out:', error);
             handleAuthError();
